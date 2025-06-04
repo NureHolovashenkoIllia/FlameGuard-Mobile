@@ -4,18 +4,45 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import ua.nure.holovashenko.flameguard_mobile.data.local.TokenDataStore
+import ua.nure.holovashenko.flameguard_mobile.data.remote.AuthApi
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor() : ViewModel() {
+class LoginViewModel @Inject constructor(
+    private val authApi: AuthApi,
+    private val tokenDataStore: TokenDataStore
+) : ViewModel() {
+
     var email by mutableStateOf("")
     var password by mutableStateOf("")
+    var isLoading by mutableStateOf(false)
+    var errorMessage by mutableStateOf<String?>(null)
 
     fun onLoginClick(onSuccess: () -> Unit) {
-        // TODO: Replace with real API call
-        if (email.isNotEmpty() && password.isNotEmpty()) {
-            onSuccess()
+        if (email.isBlank() || password.isBlank()) {
+            errorMessage = "Email and password must not be empty"
+            return
+        }
+
+        viewModelScope.launch {
+            try {
+                isLoading = true
+                val response = authApi.login(email, password)
+                if (!response.token.isNullOrEmpty()) {
+                    tokenDataStore.saveToken(response.token)
+                    onSuccess()
+                } else {
+                    errorMessage = response.error ?: "Unknown error"
+                }
+            } catch (e: Exception) {
+                errorMessage = "Login failed: ${e.localizedMessage}"
+            } finally {
+                isLoading = false
+            }
         }
     }
 }

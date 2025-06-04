@@ -11,14 +11,18 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import ua.nure.holovashenko.flameguard_mobile.data.local.TokenDataStore
+import ua.nure.holovashenko.flameguard_mobile.data.remote.AuthApi
 import ua.nure.holovashenko.flameguard_mobile.data.remote.AuthInterceptor
+import ua.nure.holovashenko.flameguard_mobile.data.remote.BuildingApi
+import ua.nure.holovashenko.flameguard_mobile.data.remote.MeasurementApi
+import ua.nure.holovashenko.flameguard_mobile.data.remote.SensorApi
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
-    private const val BASE_URL = "https://mppz-api.ruslan.page/"
+    private const val BASE_URL = "http://10.0.2.2:8080/"
 
     @Provides
     @Singleton
@@ -55,4 +59,24 @@ object NetworkModule {
     fun provideAuthInterceptor(tokenDataStore: TokenDataStore): AuthInterceptor {
         return AuthInterceptor(tokenDataStore)
     }
+
+    @Provides
+    @Singleton
+    fun provideAuthApi(retrofit: Retrofit): AuthApi =
+        retrofit.create(AuthApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideBuildingApi(retrofit: Retrofit): BuildingApi =
+        retrofit.create(BuildingApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideSensorApi(retrofit: Retrofit): SensorApi =
+        retrofit.create(SensorApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideMeasurementApi(retrofit: Retrofit): MeasurementApi =
+        retrofit.create(MeasurementApi::class.java)
 }
