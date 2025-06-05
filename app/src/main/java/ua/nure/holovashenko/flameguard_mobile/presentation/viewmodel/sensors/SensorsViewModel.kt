@@ -30,8 +30,8 @@ class SensorsViewModel @Inject constructor(
     var error by mutableStateOf<String?>(null)
 
     var sensorName by mutableStateOf("")
-    var sensorType by mutableStateOf("")
-    var sensorStatus by mutableStateOf("Active")
+    var sensorType by mutableStateOf("temperature")
+    var sensorStatus by mutableStateOf("enabled")
 
     fun loadData(buildingId: Int) {
         viewModelScope.launch {
@@ -78,7 +78,7 @@ class SensorsViewModel @Inject constructor(
     fun clearForm() {
         sensorName = ""
         sensorType = ""
-        sensorStatus = "Active"
+        sensorStatus = "enabled"
         error = null
     }
 }
