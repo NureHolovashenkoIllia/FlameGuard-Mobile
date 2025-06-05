@@ -16,6 +16,7 @@ import ua.nure.holovashenko.flameguard_mobile.data.remote.AuthInterceptor
 import ua.nure.holovashenko.flameguard_mobile.data.remote.BuildingApi
 import ua.nure.holovashenko.flameguard_mobile.data.remote.MeasurementApi
 import ua.nure.holovashenko.flameguard_mobile.data.remote.SensorApi
+import ua.nure.holovashenko.flameguard_mobile.data.remote.UserApi
 import javax.inject.Singleton
 
 @Module
@@ -64,6 +65,11 @@ object NetworkModule {
     @Singleton
     fun provideAuthApi(retrofit: Retrofit): AuthApi =
         retrofit.create(AuthApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideUserApi(retrofit: Retrofit): UserApi =
+        retrofit.create(UserApi::class.java)
 
     @Provides
     @Singleton
