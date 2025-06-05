@@ -1,5 +1,6 @@
 package ua.nure.holovashenko.flameguard_mobile.data.remote
 
+import android.util.Log
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
@@ -13,6 +14,7 @@ class AuthInterceptor(
         val token = runBlocking {
             tokenDataStore.getToken()
         }
+        Log.d("AuthInterceptor", "Token = $token")
 
         val request = if (!token.isNullOrEmpty()) {
             chain.request().newBuilder()

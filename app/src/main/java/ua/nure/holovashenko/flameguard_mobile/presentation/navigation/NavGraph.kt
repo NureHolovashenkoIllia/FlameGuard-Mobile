@@ -1,6 +1,9 @@
 package ua.nure.holovashenko.flameguard_mobile.presentation.navigation
 
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -36,14 +39,31 @@ fun FlameGuardNavGraph(
             MainTabHost(navController)
         }
 
-        composable(Screen.Sensors.route) {
-            SensorsScreen(
-                onSensorClick = { navController.navigate(Screen.Measurements.route) }
-            )
+        composable(Screen.Sensors.route) { backStackEntry ->
+            val buildingId = backStackEntry.arguments?.getString("buildingId")?.toIntOrNull()
+
+            if (buildingId != null) {
+                SensorsScreen(
+                    buildingId = buildingId,
+                    onViewMeasurements = { sensorId ->
+                        navController.navigate(Screen.Measurements.createRoute(sensorId))
+                    }
+                )
+            } else {
+                Text("Invalid building ID", modifier = Modifier.fillMaxSize())
+            }
         }
 
-        composable(Screen.Measurements.route) {
-            MeasurementsScreen()
+        composable(Screen.Measurements.route) {backStackEntry ->
+            val sensorId = backStackEntry.arguments?.getString("sensorId")?.toIntOrNull()
+
+            if (sensorId != null) {
+                MeasurementsScreen(
+                    sensorId = sensorId
+                )
+            } else {
+                Text("Invalid sensor ID", modifier = Modifier.fillMaxSize())
+            }
         }
     }
 }

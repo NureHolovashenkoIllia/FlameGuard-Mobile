@@ -32,8 +32,9 @@ class LoginViewModel @Inject constructor(
             try {
                 isLoading = true
                 val response = authApi.login(email, password)
-                if (!response.token.isNullOrEmpty()) {
+                if (!response.token.isNullOrEmpty() && !response.id.isNullOrEmpty()) {
                     tokenDataStore.saveToken(response.token)
+                    tokenDataStore.saveUserId(response.id)
                     onSuccess()
                 } else {
                     errorMessage = response.error ?: "Unknown error"
